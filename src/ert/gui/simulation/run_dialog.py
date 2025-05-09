@@ -8,17 +8,15 @@ from typing import cast
 from PyQt6.QtCore import QModelIndex, QSize, Qt, QThread, QTimer
 from PyQt6.QtCore import pyqtSignal as Signal
 from PyQt6.QtCore import pyqtSlot as Slot
-from PyQt6.QtGui import QMouseEvent, QMovie, QTextCursor, QTextOption
+from PyQt6.QtGui import QMouseEvent, QMovie
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QDialog,
-    QDialogButtonBox,
     QFrame,
     QHBoxLayout,
     QHeaderView,
     QLabel,
     QMessageBox,
-    QPlainTextEdit,
     QProgressBar,
     QPushButton,
     QSplitter,
@@ -154,22 +152,9 @@ class FMStepOverview(QTableView):
                 self,
             )
         elif FM_STEP_COLUMNS[index.column()] == ids.ERROR and index.data():
-            error_dialog = QDialog(self)
-            error_dialog.setWindowTitle("Error information")
-            layout = QVBoxLayout(error_dialog)
-
-            error_textedit = QPlainTextEdit()
-            error_textedit.setReadOnly(True)
-            error_textedit.setWordWrapMode(QTextOption.WrapMode.NoWrap)
-            error_textedit.appendPlainText(index.data())
-            layout.addWidget(error_textedit)
-
-            dialog_button = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
-            dialog_button.accepted.connect(error_dialog.accept)
-            layout.addWidget(dialog_button)
-            error_dialog.resize(700, 300)
-            error_textedit.moveCursor(QTextCursor.MoveOperation.Start)
-            error_dialog.exec()
+            ErtMessageBox(
+                text="Error information", detailed_text=index.data(), parent=self
+            ).exec()
 
     def mouseMoveEvent(self, e: QMouseEvent | None) -> None:
         if e:
