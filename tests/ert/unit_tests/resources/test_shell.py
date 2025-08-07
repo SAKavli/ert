@@ -621,3 +621,21 @@ def test_shell_script_fmstep_names(minimal_case):
             found_jobs.add(wf_name)
 
     assert len(shell_job_names) == len(found_jobs)
+
+
+def test_copy_directory_fm_handles_hashtags_in_file_names(use_tmpdir):
+    Path("foo").mkdir()
+    Path("foo/.#foo.xml#").touch()
+
+    with open("config.ert", "w", encoding="utf-8") as fout:
+        fout.write("NUM_REALIZATIONS 1\n")
+        fout.write("FORWARD_MODEL COPY_DIRECTORY(<FROM>=foo, <TO>=bar)")
+
+    with ErtPluginContext():
+        ert_config = ErtConfig.with_plugins().from_file("config.ert")
+
+    fm_shell_jobs = {}
+    for fm_step in ert_config.installed_forward_model_steps.values():
+        exe = fm_step.executable
+        if "shell_scripts" in exe:
+            fm_shell_jobs[fm_step.name.upper()] = Path(exe).resolve()
