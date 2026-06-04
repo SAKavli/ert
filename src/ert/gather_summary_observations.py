@@ -326,7 +326,7 @@ async def _run_with_client(
     ) as client:
         all_experiments = await fetch_experiments(client)
         assert isinstance(all_experiments, list)
-        experiment_id = get_experiment_id(all_experiments, args.experiment)
+        experiment_id = get_experiment_id(all_experiments, args.experiment_id)
         experiment = get_experiment(all_experiments, experiment_id)
         summary_observations = await extract_observations(
             "summary", experiment, experiment_id, client
